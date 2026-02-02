@@ -1,0 +1,144 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:700);
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+    text-shadow: 0 0 1px #000, 0 0 2px #000;
+    background: {background_color};
+    font-family: 'Roboto';
+    font-weight: 700;
+    font-size: {font_size};
+    line-height: 1.5em;
+    color: {text_color};
+}
+
+/* Keep your animation hook. It will run per-item as before. */
+#log>div {
+    /* keep your timing placeholders intact */
+    animation: fadeInRight .3s ease forwards, fadeOut 0.5s ease {message_hide_delay} forwards;
+    -webkit-animation: fadeInRight .3s ease forwards, fadeOut 0.5s ease {message_hide_delay} forwards;
+}
+
+/* WebKit (Chrome, Safari) scrollbar hide */
+#log::-webkit-scrollbar {
+    height: 0;
+    background: transparent;
+}
+/* hide colon as before */
+.colon { display: none; }
+
+/* --- Horizontal stacking, left→right flow. No truncation, no wrap. --- */
+#log {
+    display: flex;
+    flex-direction: row;           /* left to right */
+    justify-content: flex-start;   /* left align */
+    align-items: flex-end;
+    gap: 8px;                      /* spacing between items */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 0 10px 10px;
+    width: 100%;
+
+    /* IMPORTANT: allow horizontal scrolling so long messages never overlap/are clipped */
+    overflow-x: auto;              /* will scroll if messages extend beyond viewport */
+    overflow-y: hidden;
+    white-space: nowrap;           /* messages stay on a single line */
+    -webkit-overflow-scrolling: touch;
+  
+      /* allow programmatic horizontal scrolling but hide any visible scrollbar */
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+
+    /* Hide scrollbars: Firefox, IE/Edge legacy, and WebKit */
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE 10+ */
+}
+
+/* each message is sized to its content; no max-width, no truncation */
+#log>div {
+    display: inline-flex;
+    flex: 0 0 auto;                /* size according to content, do not shrink */
+    align-items: center;
+    min-width: 0;                  /* allow content-based sizing */
+    box-sizing: border-box;
+    padding: 2px 6px;
+    background: transparent;
+    overflow: visible;             /* do not clip content */
+    white-space: nowrap;           /* ensure message text stays single-line */
+    position: relative;            /* used to manage z-index per new item */
+}
+
+/* deleted items keep previous semantics */
+#log>div.deleted { visibility: hidden; }
+
+/* emote styles preserved (no change required) */
+#log .emote {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    padding: 0.6em 0.4em;
+    position: relative;
+}
+#log .emote img { display: inline-block; height: 1em; opacity: 0; }
+
+/* inner cells will size to content (removed fixed percentages and truncation) */
+#log .meta, #log .message {
+    vertical-align: top;
+    display: inline-block;
+    padding-bottom: 0.1em;
+    box-sizing: border-box;
+
+    /* guarantee one-line content */
+    white-space: nowrap;
+    overflow: visible;             /* NO truncation */
+    text-overflow: clip;           /* do not show ellipsis */
+}
+
+/* remove previous width constraints and truncation */
+#log .meta {
+    width: auto;                   /* allow name to expand as needed */
+    text-align: right;
+    padding-right: 0.5em;
+    font-size: 0.92em;
+}
+
+#log .message {
+    width: auto;                   /* allow message to expand; do not wrap or truncate */
+    word-wrap: normal;
+    overflow-wrap: normal;
+}
+
+/* badges / name styling preserved */
+.badge {
+    display: inline-block;
+    margin-right: 0.2em;
+    position: relative;
+    height: 1em;
+    vertical-align: middle;
+    top: -0.1em;
+}
+.name { margin-left: 0.2em; }
+
+/* responsive tweaks remain but keep no truncation/wrap policy */
+@media (max-width: 640px) {
+    /* on small screens we still allow the messages to expand horizontally;
+       min-width keeps a reasonable display but no truncation enforced */
+    #log>div { min-width: 120px; }
+    #log .meta { font-size: 0.85em; }
+    #log .message { font-size: 0.95em; }
+}
+
+/* Simple fallback animations (retain your placeholders) */
+@keyframes fadeInRight {
+    from { transform: translateX(24px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-8px); }
+}
